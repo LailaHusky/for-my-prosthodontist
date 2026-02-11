@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#fff0f5">
 <title>A Perfect Restoration ❤️</title>
@@ -19,6 +19,7 @@
     text-align: center;
     background: #fff0f5;
     overflow: hidden;
+    touch-action: manipulation;
   }
   h1 {
     font-size: 2em;
@@ -45,7 +46,6 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
     -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
   }
   #yes-button { background-color: #ff69b4; color: white; }
   #no-button { background-color: #f08080; color: white; }
@@ -69,8 +69,8 @@
 
 <h1 id="question">Will you accept a Full-Mouth Rehab of my heart? 💎🦷</h1>
 
-<audio id="bg-music" loop playsinline>
-  <source src="music.mp3" type="audio/mpeg">
+<audio id="bg-music" loop playsinline preload="auto">
+  <source src="YOUR_RAW_GITHUB_URL_HERE.mp3" type="audio/mpeg">
 </audio>
 
 <div class="container">
@@ -80,6 +80,7 @@
 
 <script>
 let messageIndex = 0;
+let audioUnlocked = false;
 const music = document.getElementById('bg-music');
 const icons = ['❤️', '🦷', '💎', '✨', '👑'];
 
@@ -94,11 +95,16 @@ const messages = [
   "Click Yes, or I'll have a total breakdown! 🛠️"
 ];
 
-function playMusic() {
-  // Safari unlocks audio on this user-triggered click
-  music.play().catch(e => {
-    console.log("Audio playback failed. Safari might need one more click interaction.");
-  });
+// Safari needs a direct user interaction to "unlock" audio
+function unlockAudio() {
+  if (!audioUnlocked) {
+    music.play().then(() => {
+      // If they haven't said Yes yet, we immediately pause.
+      // The "bridge" is now open for later.
+      music.pause();
+      audioUnlocked = true;
+    }).catch(e => console.log("Audio waiting for interaction"));
+  }
 }
 
 function createFloatingIcon() {
@@ -111,11 +117,11 @@ function createFloatingIcon() {
   setTimeout(() => icon.remove(), 6000);
 }
 
-// Start floating icons immediately
 setInterval(createFloatingIcon, 400);
 
 function handleNoClick() {
-  // No music here - keep it silent until she says Yes!
+  unlockAudio(); // Unlock audio hardware on first tap
+  
   const noButton = document.querySelector('#no-button');
   const yesButton = document.querySelector('#yes-button');
   
@@ -130,8 +136,8 @@ function handleNoClick() {
 }
 
 function handleYesClick() {
-  // The big reveal: Music, Confetti, and Success Message!
-  playMusic();
+  // If not unlocked yet, play() will work here because it's a direct click
+  music.play();
   
   document.getElementById('question').textContent = "Ideal Esthetics & Function Achieved! ❤️";
   
@@ -142,7 +148,7 @@ function handleYesClick() {
     colors: ['#ff69b4', '#ffffff', '#ffd700'] 
   });
 
-  // Redirect after 4 seconds so she can hear the song first
+  // Redirect after 4 seconds
   setTimeout(() => {
     window.location.href = "https://drive.google.com/file/d/1WAOiua_2-YDSZo51gqCgQiyHAWPyygi9/view?usp=sharing";
   }, 4000);
