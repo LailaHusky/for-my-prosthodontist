@@ -32,7 +32,7 @@
     border-radius: 50%;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     cursor: pointer;
-    z-index: 100;
+    z-index: 1000;
     font-size: 20px;
     width: 45px;
     height: 45px;
@@ -73,6 +73,43 @@
   #yes-button { background-color: #ff69b4; color: white; }
   #no-button { background-color: #f08080; color: white; }
 
+  /* Full Screen Image Overlay */
+  #image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 240, 245, 0.98);
+    display: none; /* Hidden until Yes is clicked */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    animation: fadeIn 1.5s ease-in forwards;
+  }
+
+  #image-overlay img {
+    max-width: 85%;
+    max-height: 70%;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    border: 5px solid white;
+  }
+
+  .overlay-text {
+    margin-top: 25px;
+    color: #ff1493;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 0 20px;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   .floating-icon {
     position: absolute;
     bottom: -50px;
@@ -103,6 +140,12 @@
   <button id="no-button" onclick="handleNoClick()">No 😢</button>
 </div>
 
+<div id="image-overlay">
+  <div class="overlay-text">Ideal Esthetics & Function Achieved! ✨</div>
+  <img src="https://raw.githubusercontent.com/LailaHusky/for-my--prosthodontist/main/image.jpg" alt="Our Restoration">
+  <div style="margin-top: 15px; color: #ff69b4; font-size: 0.9rem;">(Music playing... 🎵)</div>
+</div>
+
 <script>
 let messageIndex = 0;
 const music = document.getElementById('bg-music');
@@ -119,14 +162,6 @@ const messages = [
   "We have a perfect path of insertion! 💕",
   "Click Yes, or I'll have a total breakdown! 🛠️"
 ];
-
-// Try to play music automatically on first touch of the screen
-document.body.addEventListener('touchstart', function() {
-    if (music.paused) {
-        music.play();
-        musicBtn.innerText = "🎵";
-    }
-}, {once: true});
 
 function toggleMusic() {
   if (music.paused) {
@@ -151,10 +186,9 @@ function createFloatingIcon() {
 setInterval(createFloatingIcon, 400);
 
 function handleNoClick() {
-  // Ensure music is playing
-  music.play();
+  music.play(); // Starts music on interaction
   musicBtn.innerText = "🎵";
-
+  
   const noButton = document.querySelector('#no-button');
   const yesButton = document.querySelector('#yes-button');
   
@@ -162,30 +196,28 @@ function handleNoClick() {
   messageIndex = (messageIndex + 1) % messages.length;
 
   const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
-  if (currentSize < 100) { 
+  if (currentSize < 120) { 
     yesButton.style.fontSize = `${currentSize * 1.2}px`;
     yesButton.style.padding = `${parseFloat(window.getComputedStyle(yesButton).padding) * 1.1}px`;
   }
 }
 
 function handleYesClick() {
-  // Ensure music is playing
   music.play();
   musicBtn.innerText = "🎵";
   
-  document.getElementById('question').textContent = "Ideal Esthetics & Function Achieved! ❤️";
-  
   confetti({
     particleCount: 200,
-    spread: 80,
+    spread: 100,
     origin: { y: 0.6 },
     colors: ['#ff69b4', '#ffffff', '#ffd700'] 
   });
 
-  // Open the image in a new tab so the music keeps playing in this tab
+  // Show the image overlay
   setTimeout(() => {
-    window.open("https://drive.google.com/file/d/1WAOiua_2-YDSZo51gqCgQiyHAWPyygi9/view?usp=sharing", "_blank");
-  }, 2000);
+    const overlay = document.getElementById('image-overlay');
+    overlay.style.display = 'flex';
+  }, 800);
 }
 </script>
 
